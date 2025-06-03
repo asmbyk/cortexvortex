@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === "development") {
   navItems.push({ name: "Debug", path: "/debug", icon: "🐛" })
 }
 
-export default function Header() {
+function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
@@ -254,3 +254,6 @@ export default function Header() {
     </header>
   )
 }
+
+export { Header }
+export default Header

@@ -89,3 +89,5 @@ export default function PrivyWrapper({ children }: PrivyWrapperProps) {
     </PrivyErrorBoundary>
   )
 }
+
+export { PrivyWrapper as PrivyProvider }

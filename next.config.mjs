@@ -6,49 +6,72 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Video dosyalarının static olarak serve edilmesini sağla
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'hebbkx1anhila5yf.public.blob.vercel-storage.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'blob.vercel-storage.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cortexvortex.art',
+      },
+    ],
+  },
   async headers() {
     return [
       {
-        source: '/videos/:path*',
+        source: '/.well-known/:path*',
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization',
           },
           {
             key: 'Content-Type',
-            value: 'video/mp4',
+            value: 'application/json',
+          },
+        ],
+      },
+      {
+        source: '/api/farcaster/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization',
           },
         ],
       },
     ]
   },
-  
-  // Static dosyaların doğru şekilde kopyalanmasını sağla
-  trailingSlash: false,
-  
-  // Video dosyalarının build sırasında optimize edilmemesini sağla
-  images: {
-    unoptimized: true,
-  },
-  
-  // Webpack konfigürasyonu
-  webpack: (config, { isServer }) => {
-    // Video dosyalarının doğru şekilde handle edilmesini sağla
-    config.module.rules.push({
-      test: /\.(mp4|webm|ogg|swf|ogv)$/,
-      use: {
-        loader: 'file-loader',
-        options: {
-          publicPath: '/_next/static/videos/',
-          outputPath: 'static/videos/',
-          name: '[name].[hash].[ext]',
-        },
+  async rewrites() {
+    return [
+      {
+        source: '/.well-known/farcaster.json',
+        destination: '/api/farcaster/manifest',
       },
-    })
-    
-    return config
+    ]
   },
 }
 

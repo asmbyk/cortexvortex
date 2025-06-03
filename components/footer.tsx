@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Twitter, BarChart3, Heart } from "lucide-react"
 
-export default function Footer() {
+function Footer() {
   return (
     <footer className="relative bg-gradient-to-t from-black via-gray-900 to-transparent">
       {/* Background Effects */}
@@ -142,3 +142,6 @@ export default function Footer() {
     </footer>
   )
 }
+
+export { Footer }
+export default Footer

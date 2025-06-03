@@ -9,7 +9,7 @@ interface SplashScreenWrapperProps {
   children: React.ReactNode
 }
 
-export default function SplashScreenWrapper({ children }: SplashScreenWrapperProps) {
+function SplashScreenWrapper({ children }: SplashScreenWrapperProps) {
   const [showSplash, setShowSplash] = useState(true)
   const [hasVisited, setHasVisited] = useState(false)
 
@@ -35,3 +35,6 @@ export default function SplashScreenWrapper({ children }: SplashScreenWrapperPro
 
   return <>{children}</>
 }
+
+export { SplashScreenWrapper }
+export default SplashScreenWrapper

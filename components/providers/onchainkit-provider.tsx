@@ -15,3 +15,5 @@ export default function OnchainKitWrapper({ children }: OnchainKitWrapperProps) 
     </OnchainKitProvider>
   )
 }
+
+export { OnchainKitWrapper as OnchainKitProvider }
