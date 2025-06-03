@@ -26,6 +26,6 @@
     "ogDescription": "Enter the psychedelic universe where imagination meets artificial intelligence.",
     "ogImageUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
     "requiredChains": ["eip155:8453"],
-    "requiredCapabilities": ["wallet.getEthereumProvider", "haptics.impactOccurred"]
+    "requiredCapabilities": ["wallet.getEthereumProvider"]
   }
 }
