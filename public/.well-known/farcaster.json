@@ -1,18 +1,31 @@
 {
   "accountAssociation": {
-    "header": "eyJmaWQiOjEsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHg0ODY5NGY5NzAyNzM5NzNjNzQ2NTc4NzQ2ZjZlNmM3OTIwNjk2ZTIwNzQ2ODY1MjA2ZTY1Nzg3NDIwNzY2NTcyNzM2OTZmNmUifQ",
+    "header": "eyJmaWQiOjEsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHg0ODY5NGY5NzAyNzM5NzNjNzQ2NTc4NzQ2ZjZmNmU2Yzc5MjA2OTZlMjA3NDY4NjUyMDZlNjU3ODc0MjA3NjY1NzI3MzY5NmY2ZTZlIn0",
     "payload": "eyJkb21haW4iOiJjb3J0ZXh2b3J0ZXguYXJ0In0",
     "signature": "MHhkNjI5YzU5YTZlZWFhZGNjM2NjNzUxYjU4NWRkYzI1ZGRjNGFlNTQ5ZDJlMjZkNzNhZGM1YjMwNjllMzI3MTJjMWI="
   },
-  "appUrl": "https://cortexvortex.art",
-  "version": "1.0.0",
-  "name": "Cortex Vortex",
-  "iconUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
-  "splashImageUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
-  "splashBackgroundColor": "#000000",
-  "homeUrl": "https://cortexvortex.art",
-  "description": "Enter the psychedelic universe where imagination meets artificial intelligence. Transform any idea into a story featuring Matt Furie's iconic characters.",
-  "imageUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
-  "buttonTitle": "Enter the Vortex",
-  "frameUrl": "https://cortexvortex.art"
+  "frame": {
+    "version": "1",
+    "name": "Cortex Vortex",
+    "iconUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
+    "homeUrl": "https://cortexvortex.art",
+    "splashImageUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
+    "splashBackgroundColor": "#000000",
+    "subtitle": "AI-Powered Psychedelic Stories",
+    "description": "Enter the psychedelic universe where imagination meets artificial intelligence. Transform any idea into a story featuring Matt Furie's iconic characters.",
+    "screenshotUrls": [
+      "https://cortexvortex.art/images/screenshot1.png",
+      "https://cortexvortex.art/images/screenshot2.png",
+      "https://cortexvortex.art/images/screenshot3.png"
+    ],
+    "primaryCategory": "art-creativity",
+    "tags": ["ai", "stories", "art", "psychedelic", "creativity"],
+    "heroImageUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
+    "tagline": "Psychedelic AI Story Engine",
+    "ogTitle": "Cortex Vortex",
+    "ogDescription": "Enter the psychedelic universe where imagination meets artificial intelligence.",
+    "ogImageUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
+    "requiredChains": ["eip155:8453"],
+    "requiredCapabilities": ["wallet.getEthereumProvider", "haptics.impactOccurred"]
+  }
 }

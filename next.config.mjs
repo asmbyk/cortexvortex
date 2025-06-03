@@ -26,23 +26,27 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/.well-known/:path*',
+        source: '/.well-known/farcaster.json',
         headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/json',
+          },
           {
             key: 'Access-Control-Allow-Origin',
             value: '*',
           },
           {
             key: 'Access-Control-Allow-Methods',
-            value: 'GET, POST, PUT, DELETE, OPTIONS',
+            value: 'GET, OPTIONS',
           },
           {
             key: 'Access-Control-Allow-Headers',
-            value: 'Content-Type, Authorization',
+            value: 'Content-Type',
           },
           {
-            key: 'Content-Type',
-            value: 'application/json',
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, s-maxage=3600',
           },
         ],
       },
@@ -55,11 +59,24 @@ const nextConfig = {
           },
           {
             key: 'Access-Control-Allow-Methods',
-            value: 'GET, POST, PUT, DELETE, OPTIONS',
+            value: 'GET, POST, OPTIONS',
           },
           {
             key: 'Access-Control-Allow-Headers',
             value: 'Content-Type, Authorization',
+          },
+        ],
+      },
+      {
+        source: '/videos/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+          {
+            key: 'Content-Type',
+            value: 'video/mp4',
           },
         ],
       },
@@ -72,6 +89,21 @@ const nextConfig = {
         destination: '/api/farcaster/manifest',
       },
     ]
+  },
+  webpack: (config, { isServer }) => {
+    config.module.rules.push({
+      test: /\.(mp4|webm|ogg|swf|ogv)$/,
+      use: {
+        loader: 'file-loader',
+        options: {
+          publicPath: '/_next/static/videos/',
+          outputPath: 'static/videos/',
+          name: '[name].[hash].[ext]',
+        },
+      },
+    })
+    
+    return config
   },
 }
 

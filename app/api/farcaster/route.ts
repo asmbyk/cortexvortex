@@ -1,10 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
-  const action = searchParams.get("action")
-
-  // Basic frame response
+  // Return the frame HTML for Farcaster
   const frameHtml = `
     <!DOCTYPE html>
     <html>
@@ -22,9 +19,12 @@ export async function GET(request: NextRequest) {
         <title>Cortex Vortex</title>
       </head>
       <body>
-        <h1>Cortex Vortex</h1>
-        <p>Enter the psychedelic universe where imagination meets artificial intelligence</p>
-        <a href="https://cortexvortex.art">Enter the Vortex</a>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: #000; color: #fff; font-family: Arial, sans-serif;">
+          <img src="https://cortexvortex.art/images/cortex-vortex-logo-main.png" alt="Cortex Vortex" style="max-width: 300px; margin-bottom: 20px;">
+          <h1>Cortex Vortex</h1>
+          <p>Enter the psychedelic universe where imagination meets artificial intelligence</p>
+          <a href="https://cortexvortex.art" style="background: #8B5CF6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 20px;">Enter the Vortex</a>
+        </div>
       </body>
     </html>
   `
@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
   return new NextResponse(frameHtml, {
     headers: {
       "Content-Type": "text/html",
+      "Cache-Control": "public, max-age=300",
     },
   })
 }
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
     // Handle Farcaster frame interactions
     const { untrustedData, trustedData } = body
 
-    // For now, just redirect to the main app
+    // For Mini Apps, we typically redirect to the main app
     return NextResponse.json({
       type: "frame",
       frameUrl: "https://cortexvortex.art",
@@ -52,4 +53,15 @@ export async function POST(request: NextRequest) {
     console.error("Farcaster frame error:", error)
     return NextResponse.json({ error: "Invalid request" }, { status: 400 })
   }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  })
 }

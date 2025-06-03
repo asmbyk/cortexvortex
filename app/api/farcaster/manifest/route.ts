@@ -9,14 +9,14 @@ export async function GET() {
       signature: "MHhkNjI5YzU5YTZlZWFhZGNjM2NjNzUxYjU4NWRkYzI1ZGRjNGFlNTQ5ZDJlMjZkNzNhZGM1YjMwNjllMzI3MTJjMWI=",
     },
     appUrl: "https://cortexvortex.art",
-    version: "1.0.0",
+    version: "vNext",
     name: "Cortex Vortex",
     iconUrl: "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
     splashImageUrl: "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
     splashBackgroundColor: "#000000",
     homeUrl: "https://cortexvortex.art",
     description:
-      "Enter the psychedelic universe where imagination meets artificial intelligence. Transform any idea into a story featuring Matt Furie's iconic characters.",
+      "Enter the psychedelic universe where imagination meets artificial intelligence. Transform any idea into a story featuring Matt Furie's iconic characters like Pepe, Brett, and Landwolf.",
     imageUrl: "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
     buttonTitle: "Enter the Vortex",
     frameUrl: "https://cortexvortex.art",
@@ -26,7 +26,20 @@ export async function GET() {
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
-      "Cache-Control": "public, max-age=3600",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600",
+    },
+  })
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     },
   })
 }
