@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Menu, X, Bug } from "lucide-react"
+import { Menu, X, MessageCircle, Twitter, BarChart3, Bug } from "lucide-react"
 import { ConnectWallet } from "@/components/wallet/connect-wallet"
 
 const navItems = [
@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === "development") {
   navItems.push({ name: "Debug", path: "/debug", icon: "🐛" })
 }
 
-function Header() {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
@@ -97,22 +97,16 @@ function Header() {
             className="w-10 h-10 rounded-xl bg-white/10 hover:bg-pink-500/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
             aria-label="Telegram"
           >
-            <Image
-              src="/icons/telegram-new.png"
-              alt="Telegram"
-              width={20}
-              height={20}
-              className="opacity-80 hover:opacity-100"
-            />
+            <MessageCircle className="h-5 w-5 text-gray-300 hover:text-pink-400" />
           </a>
           <a
             href="https://x.com/cortexvortexx"
             target="_blank"
             rel="noopener noreferrer"
             className="w-10 h-10 rounded-xl bg-white/10 hover:bg-blue-500/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
-            aria-label="X (Twitter)"
+            aria-label="Twitter"
           >
-            <Image src="/icons/x.png" alt="X" width={20} height={20} className="opacity-80 hover:opacity-100" />
+            <Twitter className="h-5 w-5 text-gray-300 hover:text-blue-400" />
           </a>
           <a
             href="https://dexscreener.com/cortexvortex"
@@ -121,28 +115,7 @@ function Header() {
             className="w-10 h-10 rounded-xl bg-white/10 hover:bg-green-500/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
             aria-label="DexScreener"
           >
-            <Image
-              src="/icons/dex.png"
-              alt="DexScreener"
-              width={20}
-              height={20}
-              className="opacity-80 hover:opacity-100"
-            />
-          </a>
-          <a
-            href="https://coingecko.com/cortexvortex"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-10 h-10 rounded-xl bg-white/10 hover:bg-yellow-500/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
-            aria-label="CoinGecko"
-          >
-            <Image
-              src="/icons/coinchecko-new.png"
-              alt="CoinGecko"
-              width={20}
-              height={20}
-              className="opacity-80 hover:opacity-100"
-            />
+            <BarChart3 className="h-5 w-5 text-gray-300 hover:text-green-400" />
           </a>
           {/* Development Debug Button */}
           {process.env.NODE_ENV === "development" && (
@@ -215,17 +188,17 @@ function Header() {
                 aria-label="Telegram"
                 onClick={closeMenu}
               >
-                <Image src="/icons/telegram-new.png" alt="Telegram" width={24} height={24} className="opacity-80" />
+                <MessageCircle className="h-6 w-6 text-gray-300" />
               </a>
               <a
                 href="https://x.com/cortexvortexx"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-12 h-12 rounded-xl bg-white/10 hover:bg-blue-500/20 flex items-center justify-center transition-all duration-300"
-                aria-label="X (Twitter)"
+                aria-label="Twitter"
                 onClick={closeMenu}
               >
-                <Image src="/icons/x.png" alt="X" width={24} height={24} className="opacity-80" />
+                <Twitter className="h-6 w-6 text-gray-300" />
               </a>
               <a
                 href="https://dexscreener.com/cortexvortex"
@@ -235,17 +208,7 @@ function Header() {
                 aria-label="DexScreener"
                 onClick={closeMenu}
               >
-                <Image src="/icons/dex.png" alt="DexScreener" width={24} height={24} className="opacity-80" />
-              </a>
-              <a
-                href="https://coingecko.com/cortexvortex"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-12 h-12 rounded-xl bg-white/10 hover:bg-yellow-500/20 flex items-center justify-center transition-all duration-300"
-                aria-label="CoinGecko"
-                onClick={closeMenu}
-              >
-                <Image src="/icons/coinchecko-new.png" alt="CoinGecko" width={24} height={24} className="opacity-80" />
+                <BarChart3 className="h-6 w-6 text-gray-300" />
               </a>
             </div>
           </div>
@@ -254,6 +217,3 @@ function Header() {
     </header>
   )
 }
-
-export { Header }
-export default Header

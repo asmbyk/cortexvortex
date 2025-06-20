@@ -6,7 +6,7 @@ const VIDEO_URL =
   process.env.NEXT_PUBLIC_VIDEO_URL ||
   "https://7w0vsajavmk5it6q.public.blob.vercel-storage.com/Make_this_image_202505282041-0lyqPS1XRknDQftVP6Xw9oS1hPFGPb.mp4"
 
-function VideoBackground() {
+export default function VideoBackground() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoLoaded, setVideoLoaded] = useState(false)
   const [videoExists, setVideoExists] = useState(false)
@@ -100,6 +100,3 @@ function VideoBackground() {
     </div>
   )
 }
-
-export { VideoBackground }
-export default VideoBackground

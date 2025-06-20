@@ -6,7 +6,7 @@ import { PrivyProvider } from "@privy-io/react-auth"
 import { WagmiProvider } from "wagmi"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createWagmiConfig, defaultChain } from "@/lib/wagmi-config"
-import { PrivyErrorBoundary } from "./privy-error-boundary"
+import PrivyErrorBoundary from "./privy-error-boundary"
 
 const queryClient = new QueryClient()
 
@@ -14,7 +14,8 @@ interface PrivyWrapperProps {
   children: React.ReactNode
 }
 
-function PrivyProviderInner({ children }: PrivyWrapperProps) {
+function PrivyContent({ children }: { children: React.ReactNode }) {
+  const [skipPrivy, setSkipPrivy] = useState(false)
   const [wagmiConfig, setWagmiConfig] = useState(() => createWagmiConfig())
   const [mounted, setMounted] = useState(false)
 
@@ -39,21 +40,51 @@ function PrivyProviderInner({ children }: PrivyWrapperProps) {
 
   useEffect(() => {
     setMounted(true)
+    // Check if user chose to skip Privy
+    const shouldSkip = localStorage.getItem("skip-privy") === "true"
+    setSkipPrivy(shouldSkip)
   }, [])
 
   const privyAppId = process.env.NEXT_PUBLIC_PRIVY_APP_ID
 
-  // If no Privy App ID, just render children without Privy
+  // If no Privy App ID, show configuration error
   if (!privyAppId) {
-    console.warn("NEXT_PUBLIC_PRIVY_APP_ID is not set. Wallet features will be disabled.")
-    return <>{children}</>
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="text-center p-8 cosmic-card max-w-md">
+          <h2 className="text-2xl font-marker mb-4 glow-text-pink">Configuration Required</h2>
+          <p className="font-comic text-gray-300 mb-4">
+            Privy App ID is missing. Please add your Privy configuration to environment variables.
+          </p>
+          <div className="bg-black/40 rounded-lg p-4 text-left mb-4">
+            <p className="text-sm text-gray-400 mb-2">Required environment variables:</p>
+            <code className="text-xs text-green-400 block">NEXT_PUBLIC_PRIVY_APP_ID=prv_app_...</code>
+          </div>
+          <a
+            href="/setup"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg font-comic font-bold hover:from-pink-600 hover:to-purple-500 transition-all"
+          >
+            Setup Guide
+          </a>
+        </div>
+      </div>
+    )
   }
 
   if (!mounted) {
     return <div className="min-h-screen bg-black" />
   }
 
-  // Render with Privy - simplified configuration with Farcaster
+  // If user chose to skip Privy, render without it
+  if (skipPrivy) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <WagmiProvider config={wagmiConfig}>{children}</WagmiProvider>
+      </QueryClientProvider>
+    )
+  }
+
+  // Try to render with Privy
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={wagmiConfig}>
@@ -64,13 +95,23 @@ function PrivyProviderInner({ children }: PrivyWrapperProps) {
               theme: "dark",
               accentColor: "#8B5CF6",
               logo: "/images/cortex-vortex-logo-main.png",
-              showWalletLoginFirst: false,
+              showWalletLoginFirst: true,
+              walletList: "grid", // Cüzdanları grid olarak göster
             },
-            loginMethods: ["wallet", "email", "farcaster"],
             embeddedWallets: {
               createOnLogin: "users-without-wallets",
               requireUserPasswordOnCreate: false,
             },
+            // Sadece MetaMask, email ve Coinbase Wallet göster
+            loginMethods: ["metamask", "email", "coinbase_wallet"],
+            // Wallet connector'ları özelleştir
+            walletConnectors: [
+              { name: "metamask", showOnMobile: true, showOnDesktop: true },
+              { name: "coinbase_wallet", showOnMobile: true, showOnDesktop: true },
+            ],
+            // Wallet'ları önceliklendir
+            defaultLoginMethod: "metamask",
+            // Desteklenen zincirler
             defaultChain: defaultChain,
             supportedChains: [defaultChain],
           }}
@@ -85,9 +126,7 @@ function PrivyProviderInner({ children }: PrivyWrapperProps) {
 export default function PrivyWrapper({ children }: PrivyWrapperProps) {
   return (
     <PrivyErrorBoundary>
-      <PrivyProviderInner>{children}</PrivyProviderInner>
+      <PrivyContent>{children}</PrivyContent>
     </PrivyErrorBoundary>
   )
 }
-
-export { PrivyWrapper as PrivyProvider }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -14,59 +14,60 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { usePrivy, useWallets } from "@privy-io/react-auth"
-import { useAccount, useBalance, useDisconnect, useChainId } from "wagmi"
+import FallbackWallet from "./fallback-wallet"
 
 // Privy hook'larını güvenli şekilde kullan
 function usePrivySafe() {
   try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const privyData = usePrivy()
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { wallets } = useWallets()
-    return { ...privyData, wallets, available: true }
-  } catch (error) {
-    console.warn("Privy not available:", error)
+    const { usePrivy } = require("@privy-io/react-auth")
+    return usePrivy()
+  } catch {
     return {
       login: () => console.log("Privy not available"),
       logout: () => {},
       authenticated: false,
       user: null,
-      wallets: [],
-      available: false,
     }
   }
 }
 
 function useWagmiSafe() {
   try {
+    const { useAccount, useBalance, useDisconnect, useChainId } = require("wagmi")
     const account = useAccount()
     return {
       account,
       balance: useBalance({ address: account.address }),
       disconnect: useDisconnect(),
       chainId: useChainId(),
-      available: true,
     }
-  } catch (error) {
-    console.warn("Wagmi not available:", error)
+  } catch {
     return {
       account: { address: null, isConnected: false },
       balance: { data: null },
       disconnect: { disconnect: () => {} },
       chainId: 8453, // Base mainnet
-      available: false,
     }
   }
 }
 
 export function ConnectWallet() {
+  const [skipPrivy, setSkipPrivy] = useState(false)
   const [copied, setCopied] = useState(false)
   const { toast } = useToast()
-  const { login, logout, authenticated, user, available: privyAvailable } = usePrivySafe()
-  const { account, balance, disconnect, chainId, available: wagmiAvailable } = useWagmiSafe()
-
+  const { login, logout, authenticated, user } = usePrivySafe() // Moved inside component
+  const { account, balance, disconnect, chainId } = useWagmiSafe() // Moved inside component
   const { address, isConnected } = account
+  const { data: balanceData } = balance
+
+  useEffect(() => {
+    setSkipPrivy(localStorage.getItem("skip-privy") === "true")
+  }, [])
+
+  // If Privy is skipped, show fallback
+  if (skipPrivy) {
+    return <FallbackWallet />
+  }
 
   const copyAddress = () => {
     if (address) {
@@ -84,50 +85,30 @@ export function ConnectWallet() {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`
   }
 
-  const formatBalance = (balanceData: any) => {
-    if (!balanceData) return "0"
-    return Number.parseFloat(balanceData.formatted).toFixed(4)
+  const formatBalance = (balance: any) => {
+    if (!balance) return "0"
+    return Number.parseFloat(balance.formatted).toFixed(4)
   }
 
   const handleLogout = () => {
-    if (isConnected && disconnect && wagmiAvailable) {
+    if (isConnected && disconnect) {
       disconnect.disconnect()
     }
-    if (privyAvailable) {
-      logout()
-    }
+    logout()
   }
 
   const handleLogin = () => {
     console.log("Connect Wallet clicked - calling login()")
-    if (!privyAvailable) {
-      toast({
-        title: "Wallet Service Unavailable",
-        description: "Wallet connection is not available in this environment.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      login()
-    } catch (error) {
-      console.error("Login error:", error)
-      toast({
-        title: "Connection Error",
-        description: "Unable to connect wallet. Please try again.",
-        variant: "destructive",
-      })
-    }
+    login()
   }
 
   // Check if Privy is properly configured
   const privyAppId = process.env.NEXT_PUBLIC_PRIVY_APP_ID
-  if (!privyAppId || !privyAvailable) {
+  if (!privyAppId) {
     return (
       <Button variant="outline" className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10">
         <AlertTriangle className="h-4 w-4 mr-2" />
-        Wallet Unavailable
+        Config Required
       </Button>
     )
   }
@@ -147,9 +128,7 @@ export function ConnectWallet() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage
-              src={user?.farcaster?.pfp || user?.google?.profilePictureUrl || user?.twitter?.profilePictureUrl}
-            />
+            <AvatarImage src={user?.google?.profilePictureUrl || user?.twitter?.profilePictureUrl} />
             <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-600">
               <User className="h-4 w-4" />
             </AvatarFallback>
@@ -164,32 +143,17 @@ export function ConnectWallet() {
           {/* User Info */}
           <div className="flex items-center gap-3 mb-4">
             <Avatar className="h-12 w-12">
-              <AvatarImage
-                src={user?.farcaster?.pfp || user?.google?.profilePictureUrl || user?.twitter?.profilePictureUrl}
-              />
+              <AvatarImage src={user?.google?.profilePictureUrl || user?.twitter?.profilePictureUrl} />
               <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-600 text-white font-bold">
-                {user?.farcaster?.username?.[0]?.toUpperCase() ||
-                  user?.email?.address?.[0]?.toUpperCase() ||
-                  user?.wallet?.address?.[0]?.toUpperCase() ||
-                  "U"}
+                {user?.email?.address?.[0]?.toUpperCase() || user?.wallet?.address?.[0]?.toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <div className="font-comic font-bold text-white">
-                {user?.farcaster?.displayName ||
-                  user?.farcaster?.username ||
-                  user?.google?.name ||
-                  user?.twitter?.name ||
-                  user?.email?.address ||
-                  "Anonymous User"}
+                {user?.google?.name || user?.twitter?.name || user?.email?.address || "Anonymous User"}
               </div>
               <div className="text-sm text-gray-400">
-                {user?.farcaster?.username && (
-                  <div className="flex items-center gap-1">
-                    <span className="text-purple-400">@{user.farcaster.username}</span>
-                  </div>
-                )}
-                {user?.email?.address && !user?.farcaster?.username && (
+                {user?.email?.address && (
                   <div className="flex items-center gap-1">
                     <Mail className="h-3 w-3" />
                     {user.email.address}
@@ -216,7 +180,7 @@ export function ConnectWallet() {
                 <span className="text-sm text-gray-400">ETH Balance:</span>
                 <div className="flex items-center gap-1">
                   <Coins className="h-4 w-4 text-blue-400" />
-                  <span className="font-mono text-blue-400">{formatBalance(balance.data)} ETH</span>
+                  <span className="font-mono text-blue-400">{formatBalance(balanceData)} ETH</span>
                 </div>
               </div>
 
@@ -243,9 +207,7 @@ export function ConnectWallet() {
           {/* Connection Status */}
           <div className="flex items-center gap-2 mb-3">
             <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-yellow-500"}`}></div>
-            <span className="text-sm text-gray-400">
-              {isConnected ? "Wallet Connected" : user?.farcaster ? "Farcaster Connected" : "Privy Authenticated"}
-            </span>
+            <span className="text-sm text-gray-400">{isConnected ? "Wallet Connected" : "Privy Authenticated"}</span>
           </div>
         </DropdownMenuLabel>
 
@@ -263,24 +225,6 @@ export function ConnectWallet() {
               >
                 <ExternalLink className="h-4 w-4" />
                 View on BaseScan
-              </a>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-white/20" />
-          </>
-        )}
-
-        {/* Farcaster Profile Link */}
-        {user?.farcaster?.username && (
-          <>
-            <DropdownMenuItem asChild>
-              <a
-                href={`https://warpcast.com/${user.farcaster.username}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-purple-400 hover:text-purple-300"
-              >
-                <ExternalLink className="h-4 w-4" />
-                View Farcaster Profile
               </a>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-white/20" />

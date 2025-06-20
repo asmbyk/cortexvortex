@@ -11,9 +11,6 @@ import NFTMinting from "@/components/nft-minting"
 import { useRouter } from "next/navigation"
 import { usePrivy } from "@privy-io/react-auth"
 import Image from "next/image"
-import { useFarcaster } from "@/components/providers/farcaster-provider"
-import { FarcasterUserProfile } from "@/components/farcaster/user-profile"
-import { triggerHaptic } from "@/lib/farcaster-sdk"
 
 interface StoryGeneratorProps {
   initialPrompt?: string
@@ -30,7 +27,6 @@ export default function StoryGenerator({ initialPrompt = "", characterFocus, onW
   const { toast } = useToast()
   const router = useRouter()
   const { authenticated, user, login } = usePrivy()
-  const { isInFarcaster, context } = useFarcaster()
 
   // Karakter seçildiğinde veya initial prompt değiştiğinde prompt'u güncelle
   useEffect(() => {
@@ -63,11 +59,6 @@ export default function StoryGenerator({ initialPrompt = "", characterFocus, onW
   async function generateStory() {
     if (!prompt.trim()) return
 
-    // Trigger haptic feedback if in Farcaster
-    if (isInFarcaster) {
-      triggerHaptic("impact", "medium")
-    }
-
     setIsGenerating(true)
     setStory("")
     setIsFallback(false)
@@ -81,13 +72,6 @@ export default function StoryGenerator({ initialPrompt = "", characterFocus, onW
         body: JSON.stringify({
           prompt,
           characterFocus,
-          // Include Farcaster context if available
-          farcaster: isInFarcaster
-            ? {
-                fid: context?.user?.fid,
-                username: context?.user?.username,
-              }
-            : undefined,
         }),
       })
 
@@ -114,19 +98,11 @@ export default function StoryGenerator({ initialPrompt = "", characterFocus, onW
             description: "We couldn't generate a unique story at the moment. Please try again later.",
             variant: "destructive",
           })
-
-          if (isInFarcaster) {
-            triggerHaptic("notification", "error")
-          }
         } else {
           toast({
             title: "Story Generated! ✨",
             description: "Your psychedelic adventure is ready!",
           })
-
-          if (isInFarcaster) {
-            triggerHaptic("notification", "success")
-          }
         }
       } else {
         throw new Error(data.error || "No story returned from API")
@@ -138,20 +114,12 @@ export default function StoryGenerator({ initialPrompt = "", characterFocus, onW
         description: error instanceof Error ? error.message : "Failed to generate story. Please try again.",
         variant: "destructive",
       })
-
-      if (isInFarcaster) {
-        triggerHaptic("notification", "error")
-      }
     } finally {
       setIsGenerating(false)
     }
   }
 
   function resetForm() {
-    if (isInFarcaster) {
-      triggerHaptic("impact", "light")
-    }
-
     setPrompt("")
     setStory("")
     setStoryTitle("")
@@ -159,10 +127,6 @@ export default function StoryGenerator({ initialPrompt = "", characterFocus, onW
   }
 
   function viewFullStory() {
-    if (isInFarcaster) {
-      triggerHaptic("impact", "medium")
-    }
-
     if (story && storyTitle) {
       const slug = storyTitle
         .toLowerCase()
@@ -192,18 +156,10 @@ export default function StoryGenerator({ initialPrompt = "", characterFocus, onW
         description: "There's no story to view. Please generate a story first.",
         variant: "destructive",
       })
-
-      if (isInFarcaster) {
-        triggerHaptic("notification", "error")
-      }
     }
   }
 
   const handleWalletConnect = () => {
-    if (isInFarcaster) {
-      triggerHaptic("impact", "medium")
-    }
-
     console.log("Wallet connect clicked")
     if (onWalletConnect) {
       onWalletConnect()
@@ -223,9 +179,6 @@ export default function StoryGenerator({ initialPrompt = "", characterFocus, onW
 
   return (
     <div className="space-y-8">
-      {/* Farcaster User Profile (if in Farcaster) */}
-      {isInFarcaster && <FarcasterUserProfile />}
-
       {/* Wallet Status Banner */}
       <Card className="cosmic-card border-2 border-purple-500/30">
         <CardContent className="p-4">
@@ -304,12 +257,7 @@ export default function StoryGenerator({ initialPrompt = "", characterFocus, onW
             }
             className="min-h-32 text-lg bg-white/5 border-white/20 text-white placeholder:text-gray-400 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:border-transparent font-comic resize-none"
             value={prompt}
-            onChange={(e) => {
-              setPrompt(e.target.value)
-              if (isInFarcaster) {
-                triggerHaptic("selection")
-              }
-            }}
+            onChange={(e) => setPrompt(e.target.value)}
           />
         </div>
 
