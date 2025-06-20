@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { MessageCircle, Twitter, BarChart3, Heart } from "lucide-react"
+import { Twitter, BarChart3, Heart } from "lucide-react"
 
 export default function Footer() {
   return (
@@ -71,7 +71,13 @@ export default function Footer() {
                 className="w-12 h-12 rounded-xl bg-white/10 hover:bg-pink-500/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
                 aria-label="Telegram"
               >
-                <MessageCircle className="h-6 w-6 text-gray-300 hover:text-pink-400" />
+                <Image
+                  src="/icons/telegram-new.png"
+                  alt="Telegram"
+                  width={24}
+                  height={24}
+                  className="opacity-80 hover:opacity-100"
+                />
               </a>
               <a
                 href="https://x.com/cortexvortexx"
@@ -90,6 +96,21 @@ export default function Footer() {
                 aria-label="DexScreener"
               >
                 <BarChart3 className="h-6 w-6 text-gray-300 hover:text-green-400" />
+              </a>
+              <a
+                href="https://coingecko.com/cortexvortex"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 rounded-xl bg-white/10 hover:bg-yellow-500/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
+                aria-label="CoinGecko"
+              >
+                <Image
+                  src="/icons/coinchecko-new.png"
+                  alt="CoinGecko"
+                  width={24}
+                  height={24}
+                  className="opacity-80 hover:opacity-100"
+                />
               </a>
             </div>
             <p className="text-gray-400 font-comic text-sm">
