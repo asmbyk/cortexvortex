@@ -14,13 +14,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { usePrivy, useWallets } from "@privy-io/react-auth"
-import { useAccount, useBalance, useDisconnect, useChainId } from "wagmi"
+import { usePrivy } from "@privy-io/react-auth"
+import { useAccount, useDisconnect, useChainId } from "wagmi"
+import { useWallets } from "@privy-io/react-auth"
+import { useBalance } from "wagmi"
 
 export function ConnectWallet() {
   const [copied, setCopied] = useState(false)
   const { toast } = useToast()
-  const { login, logout, authenticated, user } = usePrivy()
+  const { ready, authenticated, login, logout, user } = usePrivy()
   const { wallets } = useWallets()
   const account = useAccount()
   const { data: balanceData } = useBalance({ address: account.address })
@@ -28,6 +30,8 @@ export function ConnectWallet() {
   const chainId = useChainId()
 
   const { address, isConnected } = account
+
+  const isWalletConnected = ready && (authenticated || isConnected)
 
   const copyAddress = () => {
     if (address) {
@@ -57,18 +61,12 @@ export function ConnectWallet() {
     logout()
   }
 
-  const handleLogin = () => {
-    console.log("Connect Wallet clicked - calling login()")
-    try {
-      login()
-    } catch (error) {
-      console.error("Login error:", error)
-      toast({
-        title: "Connection Error",
-        description: "Unable to connect wallet. Please try again.",
-        variant: "destructive",
-      })
-    }
+  const handleConnect = () => {
+    login()
+  }
+
+  const handleDisconnect = () => {
+    disconnect()
   }
 
   // Check if Privy is properly configured
@@ -82,10 +80,18 @@ export function ConnectWallet() {
     )
   }
 
+  if (!ready) {
+    return (
+      <Button disabled className="cosmic-button animate-pulse">
+        Loading...
+      </Button>
+    )
+  }
+
   // If not authenticated, show connect button
   if (!authenticated) {
     return (
-      <Button onClick={handleLogin} className="cosmic-button flex items-center gap-2">
+      <Button onClick={handleConnect} className="cosmic-button flex items-center gap-2">
         <Wallet className="h-4 w-4" />
         Connect Wallet
       </Button>

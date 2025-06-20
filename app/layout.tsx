@@ -10,6 +10,7 @@ import ErrorBoundary from "@/components/error-boundary"
 import VideoBackground from "@/components/video-background"
 import SplashScreenWrapper from "@/components/splash-screen-wrapper"
 import PrivyWrapper from "@/components/providers/privy-provider"
+import PrivyErrorBoundary from "@/components/providers/privy-error-boundary"
 
 const marker = Permanent_Marker({
   weight: "400",
@@ -44,19 +45,21 @@ export default function RootLayout({
       <body className={`${marker.variable} ${comic.variable} min-h-screen`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <ErrorBoundary>
-            <PrivyWrapper>
-              <SplashScreenWrapper>
-                <div className="relative flex min-h-screen flex-col">
-                  <VideoBackground />
-                  <div className="relative z-10 flex min-h-screen flex-col">
-                    <Header />
-                    <main className="flex-1">{children}</main>
-                    <Footer />
-                    <Toaster />
+            <PrivyErrorBoundary>
+              <PrivyWrapper>
+                <SplashScreenWrapper>
+                  <div className="relative flex min-h-screen flex-col">
+                    <VideoBackground />
+                    <div className="relative z-10 flex min-h-screen flex-col">
+                      <Header />
+                      <main className="flex-1">{children}</main>
+                      <Footer />
+                      <Toaster />
+                    </div>
                   </div>
-                </div>
-              </SplashScreenWrapper>
-            </PrivyWrapper>
+                </SplashScreenWrapper>
+              </PrivyWrapper>
+            </PrivyErrorBoundary>
           </ErrorBoundary>
         </ThemeProvider>
       </body>
