@@ -6,7 +6,6 @@ import { PrivyProvider } from "@privy-io/react-auth"
 import { WagmiProvider } from "wagmi"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createWagmiConfig, defaultChain } from "@/lib/wagmi-config"
-import { PrivyErrorBoundary } from "./privy-error-boundary"
 
 const queryClient = new QueryClient()
 
@@ -14,7 +13,7 @@ interface PrivyWrapperProps {
   children: React.ReactNode
 }
 
-function PrivyProviderInner({ children }: PrivyWrapperProps) {
+export default function PrivyWrapper({ children }: PrivyWrapperProps) {
   const [wagmiConfig, setWagmiConfig] = useState(() => createWagmiConfig())
   const [mounted, setMounted] = useState(false)
 
@@ -79,13 +78,5 @@ function PrivyProviderInner({ children }: PrivyWrapperProps) {
         </PrivyProvider>
       </WagmiProvider>
     </QueryClientProvider>
-  )
-}
-
-export default function PrivyWrapper({ children }: PrivyWrapperProps) {
-  return (
-    <PrivyErrorBoundary>
-      <PrivyProviderInner>{children}</PrivyProviderInner>
-    </PrivyErrorBoundary>
   )
 }
