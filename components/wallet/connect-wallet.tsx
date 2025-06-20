@@ -17,15 +17,54 @@ import {
 import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { useAccount, useBalance, useDisconnect, useChainId } from "wagmi"
 
+// Privy hook'larını güvenli şekilde kullan
+function usePrivySafe() {
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const privyData = usePrivy()
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { wallets } = useWallets()
+    return { ...privyData, wallets, available: true }
+  } catch (error) {
+    console.warn("Privy not available:", error)
+    return {
+      login: () => console.log("Privy not available"),
+      logout: () => {},
+      authenticated: false,
+      user: null,
+      wallets: [],
+      available: false,
+    }
+  }
+}
+
+function useWagmiSafe() {
+  try {
+    const account = useAccount()
+    return {
+      account,
+      balance: useBalance({ address: account.address }),
+      disconnect: useDisconnect(),
+      chainId: useChainId(),
+      available: true,
+    }
+  } catch (error) {
+    console.warn("Wagmi not available:", error)
+    return {
+      account: { address: null, isConnected: false },
+      balance: { data: null },
+      disconnect: { disconnect: () => {} },
+      chainId: 8453, // Base mainnet
+      available: false,
+    }
+  }
+}
+
 export function ConnectWallet() {
   const [copied, setCopied] = useState(false)
   const { toast } = useToast()
-  const { login, logout, authenticated, user } = usePrivy()
-  const { wallets } = useWallets()
-  const account = useAccount()
-  const { data: balanceData } = useBalance({ address: account.address })
-  const { disconnect } = useDisconnect()
-  const chainId = useChainId()
+  const { login, logout, authenticated, user, available: privyAvailable } = usePrivySafe()
+  const { account, balance, disconnect, chainId, available: wagmiAvailable } = useWagmiSafe()
 
   const { address, isConnected } = account
 
@@ -45,20 +84,31 @@ export function ConnectWallet() {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`
   }
 
-  const formatBalance = (balance: any) => {
-    if (!balance) return "0"
-    return Number.parseFloat(balance.formatted).toFixed(4)
+  const formatBalance = (balanceData: any) => {
+    if (!balanceData) return "0"
+    return Number.parseFloat(balanceData.formatted).toFixed(4)
   }
 
   const handleLogout = () => {
-    if (isConnected && disconnect) {
-      disconnect()
+    if (isConnected && disconnect && wagmiAvailable) {
+      disconnect.disconnect()
     }
-    logout()
+    if (privyAvailable) {
+      logout()
+    }
   }
 
   const handleLogin = () => {
     console.log("Connect Wallet clicked - calling login()")
+    if (!privyAvailable) {
+      toast({
+        title: "Wallet Service Unavailable",
+        description: "Wallet connection is not available in this environment.",
+        variant: "destructive",
+      })
+      return
+    }
+
     try {
       login()
     } catch (error) {
@@ -73,11 +123,11 @@ export function ConnectWallet() {
 
   // Check if Privy is properly configured
   const privyAppId = process.env.NEXT_PUBLIC_PRIVY_APP_ID
-  if (!privyAppId) {
+  if (!privyAppId || !privyAvailable) {
     return (
       <Button variant="outline" className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10">
         <AlertTriangle className="h-4 w-4 mr-2" />
-        Config Required
+        Wallet Unavailable
       </Button>
     )
   }
@@ -166,7 +216,7 @@ export function ConnectWallet() {
                 <span className="text-sm text-gray-400">ETH Balance:</span>
                 <div className="flex items-center gap-1">
                   <Coins className="h-4 w-4 text-blue-400" />
-                  <span className="font-mono text-blue-400">{formatBalance(balanceData)} ETH</span>
+                  <span className="font-mono text-blue-400">{formatBalance(balance.data)} ETH</span>
                 </div>
               </div>
 
