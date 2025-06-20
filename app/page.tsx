@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Zap, Palette, Rocket, Stars, Wand2 } from "lucide-react"
+import { Sparkles, Zap, Palette, Rocket, Stars, Wand2, Clock } from "lucide-react"
 
 export default function HomePage() {
   const featuredStories = [
@@ -116,6 +116,10 @@ export default function HomePage() {
               Where <span className="glow-text-pink font-bold">imagination</span> meets{" "}
               <span className="glow-text-blue font-bold">artificial intelligence</span>
             </p>
+            <Badge className="mt-2 mb-4 px-4 py-2 bg-gradient-to-r from-teal-400 to-cyan-500 hover:from-cyan-500 hover:to-teal-400 text-white border-none text-md font-comic inline-flex items-center">
+              <Clock className="mr-2 h-4 w-4" />
+              Farcaster Mini App: Yakında! (Lansmandan sonra aktif olacaktır)
+            </Badge>
             <p className="text-lg md:text-xl font-comic text-gray-400 max-w-2xl mx-auto">
               Transform any idea into a psychedelic story featuring Matt Furie's iconic characters
             </p>
