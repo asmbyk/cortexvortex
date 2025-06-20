@@ -1,31 +1,34 @@
 {
-  "accountAssociation": {
-    "header": "eyJmaWQiOjQ2NjQ2MiwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweENjNWZhNDBCNjI0MTdlQjI3MDc1MWJGMWUyYzM4NzczMmY3YzA1NjkifQ",
-    "payload": "eyJkb21haW4iOiJjb3J0ZXh2b3J0ZXguYXJ0In0",
-    "signature": "MHhkM2I1MWYxOTM3NjFmOTQ5ZGJmY2M0MjJiNDE4ODY3MmI4ODMyOGZlMTNlMDU5NTM2ZDAzZDg4NmE0NTlmOGE1NGRkZTY4YTc0MzgzYmFlZjk5ZTgyMmJkNjJmZGJjYmYxM2E3YWFlYWZlNGUwYTQ5MzQyYWJmNmI4MmE0YjgzNTFi"
-  },
-  "frame": {
-    "version": "1",
-    "name": "Cortex Vortex",
-    "iconUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
-    "homeUrl": "https://cortexvortex.art",
-    "splashImageUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
-    "splashBackgroundColor": "#000000",
-    "subtitle": "AI-Powered Psychedelic Stories",
-    "description": "Enter the psychedelic universe where imagination meets artificial intelligence. Transform any idea into a story featuring Matt Furie's iconic characters.",
-    "screenshotUrls": [
-      "https://cortexvortex.art/images/screenshot1.png",
-      "https://cortexvortex.art/images/screenshot2.png",
-      "https://cortexvortex.art/images/screenshot3.png"
+  "name": "Cortex Vortex",
+  "description": "Generate psychedelic stories in the style of Matt Furie's universe",
+  "icons": [
+    {
+      "src": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "image": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
+  "app": {
+    "id": "cortex-vortex",
+    "url": "https://cortexvortex.art",
+    "entrypoints": [
+      {
+        "type": "url",
+        "url": "https://cortexvortex.art"
+      }
     ],
-    "primaryCategory": "art-creativity",
-    "tags": ["ai", "stories", "art", "psychedelic", "creativity"],
-    "heroImageUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
-    "tagline": "Psychedelic AI Story Engine",
-    "ogTitle": "Cortex Vortex",
-    "ogDescription": "Enter the psychedelic universe where imagination meets artificial intelligence.",
-    "ogImageUrl": "https://cortexvortex.art/images/cortex-vortex-logo-main.png",
-    "requiredChains": ["eip155:8453"],
-    "requiredCapabilities": ["wallet.getEthereumProvider"]
-  }
+    "capabilities": {
+      "frames": true,
+      "notifications": true,
+      "storage": true
+    }
+  },
+  "accountAssociation": {
+    "fid": 1234,
+    "username": "cortexvortex",
+    "custody_address": "0x1234567890abcdef1234567890abcdef12345678",
+    "verification_method": "farcaster"
+  },
+  "version": "vNext"
 }

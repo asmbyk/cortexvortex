@@ -10,9 +10,7 @@ import ErrorBoundary from "@/components/error-boundary"
 import VideoBackground from "@/components/video-background"
 import SplashScreenWrapper from "@/components/splash-screen-wrapper"
 import PrivyWrapper from "@/components/providers/privy-provider"
-import { FarcasterProvider } from "@/components/farcaster/farcaster-provider"
-import { SafeAreaWrapper } from "@/components/farcaster/safe-area-wrapper"
-import { FarcasterHeader } from "@/components/farcaster/farcaster-header"
+import { FarcasterProvider, SafeArea } from "@/components/providers/farcaster-provider"
 
 const marker = Permanent_Marker({
   weight: "400",
@@ -78,24 +76,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Mini App detection and SDK loading */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            (function() {
-              const url = new URL(window.location.href);
-              const isMiniApp = 
-                url.pathname.startsWith('/mini') ||
-                url.searchParams.get('miniApp') === 'true' ||
-                window.parent !== window;
-              
-              if (isMiniApp) {
-                document.documentElement.classList.add('mini-app-mode');
-              }
-            })();
-          `,
-          }}
-        />
         {/* Farcaster Mini App specific meta tags */}
         <meta property="fc:frame" content="vNext" />
         <meta property="fc:frame:image" content="https://cortexvortex.art/images/cortex-vortex-logo-main.png" />
@@ -118,30 +98,26 @@ export default function RootLayout({
         {/* Favicon and app icons */}
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/images/cortex-vortex-logo-main.png" />
-
-        {/* Farcaster SDK */}
-        <script src="https://sdk.farcaster.xyz/v0.1.0/sdk.js" async></script>
       </head>
       <body className={`${marker.variable} ${comic.variable} min-h-screen`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <ErrorBoundary>
-            <FarcasterProvider>
+          <FarcasterProvider>
+            <ErrorBoundary>
               <PrivyWrapper>
                 <SplashScreenWrapper>
-                  <SafeAreaWrapper className="relative flex min-h-screen flex-col">
+                  <div className="relative flex min-h-screen flex-col">
                     <VideoBackground />
-                    <div className="relative z-10 flex min-h-screen flex-col">
-                      <FarcasterHeader />
+                    <SafeArea className="relative z-10 flex min-h-screen flex-col">
                       <Header />
                       <main className="flex-1">{children}</main>
                       <Footer />
                       <Toaster />
-                    </div>
-                  </SafeAreaWrapper>
+                    </SafeArea>
+                  </div>
                 </SplashScreenWrapper>
               </PrivyWrapper>
-            </FarcasterProvider>
-          </ErrorBoundary>
+            </ErrorBoundary>
+          </FarcasterProvider>
         </ThemeProvider>
       </body>
     </html>
